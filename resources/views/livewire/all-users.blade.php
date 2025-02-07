@@ -8,7 +8,7 @@
                 <th scope="col">Status</th>
                 <th scope="col">Premium</th>
                 <th scope="col">Last Login</th>
-                <th scope="col">Time</th>
+                <th scope="col">Registered</th>
                 <th scope="col">Action</th>
             </tr>
         </thead>
@@ -18,9 +18,9 @@
                     <td><a href="javascript:void(0)" class="text-primary-600"> {{ $loop->iteration }} </a></td>
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
-                    <td>{{ $user->purchases->isNotEmpty() ? 'Premium' : 'Free' }}</td>
+                    <td>{{ $user->purchases ? 'Premium' : 'Free' }}</td>
                     <td>
-                        @if ($user->purchases->isNotEmpty())
+                        @if ($user->purchases)
                             <button type="submit" wire:click="clearPurchase({{ $user->id }})"
                                 class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                                 <iconify-icon icon="ic:sharp-clear"></iconify-icon>
@@ -33,7 +33,8 @@
                         @endif
                     </td>
                     <td>{{ $user->last_login ? $user->last_login->diffForHumans() : 'Never' }}</td>
-                    <td>C: {{ $user->created_at->diffForHumans() }}<br>U: {{ $user->updated_at->diffForHumans() }}
+                    <td>
+                        {{ $user->created_at->diffForHumans() }}
                     </td>
                     <td>
                         <div class="d-flex align-items-center">
@@ -65,14 +66,22 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    @if ($errors->any())
+                        <div class="py-2">
+                            @foreach ($errors->all() as $error)
+                                <x-alert type="danger" :message="$error" />
+                            @endforeach
+                        </div>
+                    @endif
                     <form wire:submit.prevent="addPurchase">
                         <div class="mb-3">
-                            <label for="expirationDate" class="form-label">Expiration Date</label>
-                            <input type="date" id="expirationDate" wire:model="expirationDate"
-                                class="form-control @error('expirationDate') is-invalid @enderror">
-                            @error('expirationDate')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
+                            <label for="expirationDate" class="form-label">Plan</label>
+                            <select name="plan_id" wire:model.blur="plan_id" class="form-select">
+                                <option selected>Select Plan</option>
+                                @foreach ($plans as $plan)
+                                    <option value="{{ $plan->id }}">{{ $plan->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <button type="submit" class="btn btn-primary">Save</button>
                     </form>
@@ -82,25 +91,23 @@
     </div>
 </div>
 
-<script>
-    window.addEventListener('open-modal', event => {
-        var myModal = new bootstrap.Modal(document.getElementById('purchaseModal'));
-        myModal.show();
-    });
+@script
+    <script>
+        $wire.on('open-modal', () => {
+            var myModal = new bootstrap.Modal(document.getElementById('purchaseModal'));
+            myModal.show();
+        });
 
-    window.addEventListener('close-modal', event => {
-        setTimeout(function() {
-            var modal = bootstrap.Modal.getInstance(document.querySelector('#purchaseModal'));
-            modal.hide();
-        }, 2000);
-    });
+        $wire.on('close-modal', () => {
+            var myModal = new bootstrap.Modal(document.getElementById('purchaseModal'));
+            myModal.hide();
+        });
 
-    window.addEventListener('alert_add', event => {
-        console.log(event.detail);
-        alert('Purchase Added Succesfully');
-    });
-    window.addEventListener('alert_clear', event => {
-        console.log(event.detail);
-        alert('Cleared All Purchases of User');
-    });
-</script>
+        $wire.on('purchaseAdded', () => {
+            alert('Purchase Added Succesfully');
+        });
+        $wire.on('purchaseCleared', () => {
+            alert('Cleared All Purchases of User');
+        });
+    </script>
+@endscript

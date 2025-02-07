@@ -12,7 +12,7 @@
                     <x-alert type="info" :message="session('status')" />
                 @endif
                 <div>
-                    <a href="index.html" class="mb-40 max-w-290-px">
+                    <a href="{{ route('admin-home') }}" class="mb-40 max-w-290-px">
                         <img src="{{ asset('admin_assets/images/logo.png') }}" alt="">
                     </a>
                     <h4 class="mb-12">Sign In to your Account</h4>
@@ -25,13 +25,13 @@
                         @endforeach
                     </div>
                 @endif
-                <form action="{{ route('login-user') }}" method="POST">
+                <form action="{{ route('login.request') }}" method="POST">
                     @csrf
                     <div class="icon-field mb-16">
                         <span class="icon top-50 translate-middle-y">
                             <iconify-icon icon="mage:email"></iconify-icon>
                         </span>
-                        <input type="text" name="email_or_username" value="{{ old('email_or_username') }}"
+                        <input type="text" name="username" value="{{ old('username') }}"
                             class="form-control h-56-px bg-neutral-50 radius-12" placeholder="Email">
                     </div>
                     <div class="position-relative mb-20">
@@ -53,36 +53,12 @@
                                     value="{{ old('remember') }}" name="remember" id="remeber">
                                 <label class="form-check-label" for="remeber">Remember me </label>
                             </div>
-                            <a href="{{ route('password.request') }}" class="text-primary-600 fw-medium">Forgot
-                                Password?</a>
                         </div>
                     </div>
 
                     <button type="submit" class="btn btn-primary text-sm btn-sm px-12 py-16 w-100 radius-12 mt-32">
                         Sign
                         In</button>
-
-                    <div class="mt-32 center-border-horizontal text-center">
-                        <span class="bg-base z-1 px-4">Or sign in with</span>
-                    </div>
-                    <div class="mt-32 d-flex align-items-center gap-3">
-                        <button type="button"
-                            class="fw-semibold text-primary-light py-16 px-24 w-50 border radius-12 text-md d-flex align-items-center justify-content-center gap-12 line-height-1 bg-hover-primary-50">
-                            <iconify-icon icon="ic:baseline-facebook"
-                                class="text-primary-600 text-xl line-height-1"></iconify-icon>
-                            Google
-                        </button>
-                        <button type="button"
-                            class="fw-semibold text-primary-light py-16 px-24 w-50 border radius-12 text-md d-flex align-items-center justify-content-center gap-12 line-height-1 bg-hover-primary-50">
-                            <iconify-icon icon="logos:google-icon"
-                                class="text-primary-600 text-xl line-height-1"></iconify-icon>
-                            Google
-                        </button>
-                    </div>
-                    <div class="mt-32 text-center text-sm">
-                        <p class="mb-0">Don’t have an account? <a href="{{ route('signup') }}"
-                                class="text-primary-600 fw-semibold">Sign Up</a></p>
-                    </div>
 
                 </form>
             </div>

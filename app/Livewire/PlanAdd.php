@@ -22,24 +22,29 @@ class PlanAdd extends Component
     #[Validate]
     public $duration;
 
+    #[Validate]
+    public $duration_unit;
+
     protected function rules()
     {
         return [
             'name' => 'required|string|max:255',
             'description' => 'required|max:50',
-            'price' => 'required',
-            'duration' => 'required',
+            'price' => 'required|numeric',
+            'duration' => 'required|numeric',
+            'duration_unit' => 'required|in:day,week,month,year',
         ];
     }
 
     public function submit()
     {
         $this->validate();
-        $plan = Plan::create([
+        Plan::create([
             'name' => $this->name,
             'description' => $this->description,
             'price' => $this->price,
             'duration' => $this->duration,
+            'duration_unit' => $this->duration_unit,
         ]);
 
         return redirect()->route('all-plans')->with([

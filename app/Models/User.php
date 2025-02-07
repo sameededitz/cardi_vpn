@@ -2,22 +2,17 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-
-use App\Mail\CustomEmailVerification;
-use App\Mail\CustomPasswordReset;
 use App\Notifications\CustomResetPassword;
 use App\Notifications\CustomVerifyEmailNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Cashier\Billable;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable, HasApiTokens, Billable;
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -79,6 +74,26 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function purchases()
     {
-        return $this->hasMany(Purchase::class);
+        return $this->hasOne(Purchase::class);
+    }
+
+    public function isPremium()
+    {
+        return $this->purchases()->where('is_active', true)->where('expires_at', '>', now())->exists();
+    }
+
+    public function assignFreeTrial()
+    {
+        if ($this->isPremium()) {
+            return;
+        }
+        if ($this->role === 'customer') {
+            $this->purchases()->create([
+                'plan_id' => 1,
+                'started_at' => now(),
+                'expires_at' => now()->addMonth(3),
+                'is_active' => true,
+            ]);
+        }
     }
 }

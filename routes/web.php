@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\VerifyController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -19,19 +20,19 @@ Route::get('password/reset/view/{email}/{token}', [VerifyController::class, 'vie
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'LoginForm'])->name('login');
 
-    Route::post('/login-user', [AuthController::class, 'login'])->name('login-user')->middleware('throttle:login-user');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.request')->middleware('throttle:login');
 
-    Route::get('/signup', [AuthController::class, 'signupForm'])->name('signup');
+    // Route::get('/signup', [AuthController::class, 'signupForm'])->name('signup');
 
-    Route::post('/register-user', [AuthController::class, 'register'])->name('register-user');
+    // Route::post('/register-user', [AuthController::class, 'register'])->name('register-user');
 
-    Route::get('/forgot-password', [VerifyController::class, 'forgotPass'])->name('password.request');
+    // Route::get('/forgot-password', [VerifyController::class, 'forgotPass'])->name('password.request');
 
-    Route::post('/forgot-password/email', [VerifyController::class, 'resetPassLink'])->name('password.email');
+    // Route::post('/forgot-password/email', [VerifyController::class, 'resetPassLink'])->name('password.email');
 
-    Route::get('/reset-password/{token}', [VerifyController::class, 'resetPassForm'])->name('password.reset');
+    // Route::get('/reset-password/{token}', [VerifyController::class, 'resetPassForm'])->name('password.reset');
 
-    Route::post('/reset-password/new', [VerifyController::class, 'NewPassword'])->name('password.update');
+    // Route::post('/reset-password/new', [VerifyController::class, 'NewPassword'])->name('password.update');
 });
 
 Route::middleware('auth')->group(function () {
@@ -44,6 +45,21 @@ Route::middleware('auth')->group(function () {
         ->name('verification.send');
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+});
+
+Route::get('/optimize', function () {
+    Artisan::call('optimize:clear');
+    return 'Optimized';
+});
+
+Route::get('/storage-link', function () {
+    Artisan::call('storage:link');
+    return 'Linked';
+});
+
+Route::get('/migrate', function () {
+    Artisan::call('migrate:fresh --seed');
+    return 'Migrated and Seeded';
 });
 
 require __DIR__ . '/admin.php';

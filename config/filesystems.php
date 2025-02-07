@@ -46,8 +46,8 @@ return [
 
         'media' => [
             'driver' => 'local',
-            'root' => public_path('app/p'),
-            'url' => env('APP_URL') . '/storage/upload',
+            'root' => storage_path('app/public/media'),
+            'url' => env('APP_URL') . '/storage/media',
             'visibility' => 'public',
         ],
 

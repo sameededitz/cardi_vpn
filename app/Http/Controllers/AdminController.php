@@ -28,7 +28,7 @@ class AdminController extends Controller
         return view('admin.edit-admin', compact('user'));
     }
 
-    public function deleteAdmin(Request $request, User $user)
+    public function deleteAdmin(User $user)
     {
         $user->delete();
         return redirect()->route('all-admins')->with([
@@ -48,17 +48,7 @@ class AdminController extends Controller
 
     public function AllUsers()
     {
-        $users = User::where('role', 'customer')
-            ->with(['purchases' => function ($query) {
-                $query->where('is_active', true);
-            }])
-            ->get();
-
-        $users->map(function ($user) {
-            $user->status = $user->purchases->isNotEmpty() ? 'Premium' : 'Free';
-        });
-        // dd($users);
-        return view('admin.all-users', compact('users'));
+        return view('admin.all-users');
     }
 
 }

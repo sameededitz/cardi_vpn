@@ -23,4 +23,17 @@ class PlanFactory extends Factory
             'duration' => fake()->numberBetween(1, 12)
         ];
     }
+
+    public function trial(): Factory
+    {
+        return $this->state(function () {
+            return [
+                'name' => 'New User Trial',
+                'description' => 'New User Trial Plan (Dont Delete)',
+                'price' => '0.00',
+                'duration' => '3',
+                'duration_unit' => 'month',
+            ];
+        });
+    }
 }

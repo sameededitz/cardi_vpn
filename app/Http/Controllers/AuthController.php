@@ -17,24 +17,36 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email_or_username' => 'required',
+            'username' => 'required',
             'password' => 'required',
         ]);
 
-        $loginType = filter_var($request->email_or_username, FILTER_VALIDATE_EMAIL) ? 'email' : 'name';
+        $loginType = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'name';
 
-        $user = User::where($loginType, $request->email_or_username)->first();
-        if(!$user){
+        $user = User::where($loginType, $request->username)->first();
+        if (!$user) {
             return back()->withErrors([
-                'email_or_username' => "We couldn't find an account with that " . ($loginType == 'email' ? 'email' : 'username') . ".",
+                'username' => "We couldn't find an account with that " . ($loginType == 'email' ? 'email' : 'username') . ".",
             ]);
         }
 
         $credentials = [
-            $loginType => $request->email_or_username,
+            $loginType => $request->username,
             'password' => $request->password,
         ];
         $remember = $request->has('remember');
+
+        if (!$user->hasVerifiedEmail()) {
+            return back()->withErrors([
+                'username' => 'Please verify your email first.',
+            ]);
+        }
+
+        if ($user->role != 'admin') {
+            return back()->withErrors([
+                'username' => 'You are not an admin.',
+            ]);
+        }
 
         if (Auth::attempt($credentials, $remember)) {
             $user = Auth::user();

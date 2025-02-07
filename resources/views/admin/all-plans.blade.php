@@ -12,7 +12,7 @@
         <h6 class="fw-semibold mb-0"></h6>
         <ul class="d-flex align-items-center gap-2">
             <li class="fw-medium">
-                <a href="index.html" class="d-flex align-items-center gap-1 hover-text-primary">
+                <a href="{{ route('admin-home') }}" class="d-flex align-items-center gap-1 hover-text-primary">
                     <iconify-icon icon="solar:home-smile-angle-outline" class="icon text-lg"></iconify-icon>
                     Dashboard
                 </a>
@@ -38,8 +38,8 @@
                         <th scope="col">Name</th>
                         <th scope="col">Price</th>
                         <th scope="col">Description</th>
-                        <th scope="col">duration</th>
-                        <th scope="col">Time</th>
+                        <th scope="col">Duration</th>
+                        <th scope="col">Created</th>
                         <th scope="col">Action</th>
                     </tr>
                 </thead>
@@ -48,10 +48,11 @@
                         <tr>
                             <td><a href="javascript:void(0)" class="text-primary-600"> {{ $loop->iteration }} </a></td>
                             <td>{{ $plan->name }}</td>
-                            <td>${{ $plan->price }}/month</td>
+                            <td>${{ $plan->price }}</td>
                             <td>{{ $plan->description }}</td>
-                            <td>{{ $plan->duration }} months</td>
-                            <td>C:{{ $plan->created_at->diffForHumans() }}<br>U:{{ $plan->updated_at->diffForHumans() }}
+                            <td>{{ $plan->duration }} {{ Str::title($plan->duration_unit) }} </td>
+                            <td>
+                                {{ $plan->created_at->diffForHumans() }}
                             </td>
                             <td>
                                 <div class="d-flex align-items-center">

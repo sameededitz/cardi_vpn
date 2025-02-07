@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('purchases', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('plan_id')->nullable()->constrained()->onDelete('set null');
             $table->dateTime('started_at');
             $table->dateTime('expires_at');
             $table->boolean('is_active')->default(true);
